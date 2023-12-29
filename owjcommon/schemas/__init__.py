@@ -12,38 +12,41 @@ from owjcommon.validators import is_valid_phone_number
 
 
 class Detail(BaseModel):
-    loc: List[Union[str, int]]
-    msg: str
-    type: str
+    loc: List[Union[str, int]] = Field(..., description="Location of the error")
+    msg: str = Field(..., description="Error message")
+    type: str = Field(..., description="Error type")
 
 
 class ValidationErrorDetail(BaseModel):
-    id: str = "E1001"
+    id: str = Field("E1001", description="Error ID")
     message: str = exception_codes["E1001"]
     detail: List[Detail]
 
 
 class ValidationErrorResponse(BaseModel):
-    success: bool = False
-    error: ValidationErrorDetail
+    success: bool = Field(False, description="Success flag")
+    error: ValidationErrorDetail = Field(..., description="Error details")
 
 
 class ErrorDetail(BaseModel):
-    id: str
-    message: str
+    id: str = Field(..., description="Error ID")
+    message: str = Field(..., description="Error message")
 
 
 class ErrorResponse(BaseModel):
-    success: bool = False
-    error: ErrorDetail
+    success: bool = Field(False, description="Success flag")
+    error: ErrorDetail = Field(..., description="Error details")
 
 
 class Response(BaseModel):
-    success: bool = True
+    success: bool = Field(True, description="Success flag")
 
 
 class Password(BaseModel):
-    password: str
+    password: str = Field(
+        ...,
+        description="Password, must be at least 8 characters long, contain at least one number, one uppercase letter and one lowercase letter",
+    )
 
     @validator("password", pre=True, always=True)
     def validate_password(cls, value):
@@ -67,7 +70,7 @@ class Password(BaseModel):
 
 
 class PhoneNumber(BaseModel):
-    phone_number: str
+    phone_number: str = Field(..., description="Phone number in E.164 format")
 
     @validator("phone_number", pre=True, always=True)
     def validate_phone_number(cls, value):
@@ -78,15 +81,19 @@ class PhoneNumber(BaseModel):
 
 
 class PaginatedResult(Response):
-    total_pages: int
+    total_pages: int = Field(..., description="Total number of pages")
 
 
 class Filters(BaseModel):
-    logical_op: LogicalOperation = LogicalOperation.AND
-    match_type: MatchType = MatchType.LIKE
+    logical_op: LogicalOperation = Field(
+        LogicalOperation.AND, description="Logical operation to apply to the filters"
+    )
+    match_type: MatchType = Field(
+        MatchType.LIKE, description="Match type to apply to the filters"
+    )
 
 
 class OwjBaseModel(BaseModel):
-    id: int
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
+    id: int = Field(..., description="Unique identifier")
+    created_at: datetime.datetime = Field(..., description="Creation date")
+    updated_at: datetime.datetime = Field(..., description="Last update date")
