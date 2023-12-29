@@ -15,6 +15,9 @@ class Detail(BaseModel):
     loc: List[Union[str, int]] = Field(..., description="Location of the error")
     msg: str = Field(..., description="Error message")
     type: str = Field(..., description="Error type")
+    input: Optional[str] = Field(None, description="Input value")
+    ctx: Optional[dict] = Field(None, description="Context")
+    url: Optional[str] = Field(None, description="URL")
 
 
 class ValidationErrorDetail(BaseModel):
