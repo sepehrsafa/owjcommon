@@ -11,3 +11,8 @@ class MatchType(str, Enum):
 class LogicalOperation(str, Enum):
     AND = "and"
     OR = "or"
+
+
+class SortOrder(str, Enum):
+    ASC = "asc"
+    DESC = "desc"

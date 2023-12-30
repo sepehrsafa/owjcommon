@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from tortoise.expressions import Q
 from tortoise.models import Model
 
-from owjcommon.enums import LogicalOperation, MatchType
+from owjcommon.enums import LogicalOperation, MatchType, SortOrder
 
 
 def build_conditions(filters: Dict[str, Any]) -> List[Q]:
@@ -46,6 +46,8 @@ async def get_paginated_results_with_filter(
     user_filters: Optional[Union[Dict[str, Any], BaseModel]] = None,
     system_filters: Optional[Union[Dict[str, Any], BaseModel]] = None,
     prefetch_related: Optional[List[str]] = None,
+    sort_order: Optional[SortOrder] = None,
+    sort_field: Optional[str] = None,
 ) -> dict:
     query = model.all()
 
@@ -70,11 +72,17 @@ async def get_paginated_results_with_filter(
     if prefetch_related:
         query = query.prefetch_related(*prefetch_related)
 
+    if sort_order and sort_field:
+        if sort_order == SortOrder.ASC:
+            query = query.order_by(sort_field)
+        else:
+            query = query.order_by(f"-{sort_field}")
+
     total_items = await query.count()
     total_pages = (total_items - 1) // size + 1
     items = await query.offset(offset).limit(size)
 
-    return {"total_pages": total_pages, "items": items}
+    return {"total_items": total_items, "total_pages": total_pages, "items": items}
 
 
 async def get_paginated_results(
@@ -92,7 +100,7 @@ async def get_paginated_results(
             .limit(size)
         )
 
-    return {"total_pages": total_pages, "items": items}
+    return {"total_items": total_items, "total_pages": total_pages, "items": items}
 
 
 async def get_paginated_data_results(data, offset: int, size: int) -> dict:
@@ -113,4 +121,4 @@ async def get_paginated_data_results(data, offset: int, size: int) -> dict:
 
     items = data[offset:limit]
 
-    return {"total_pages": total_pages, "items": items}
+    return {"total_items": total_items, "total_pages": total_pages, "items": items}

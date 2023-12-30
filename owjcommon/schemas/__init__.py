@@ -6,7 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseConfig, BaseModel, Field, ValidationError, validator
 
-from owjcommon.enums import LogicalOperation, MatchType
+from owjcommon.enums import LogicalOperation, MatchType, SortOrder
 from owjcommon.exceptions import exception_codes
 from owjcommon.validators import is_valid_phone_number
 
@@ -85,6 +85,7 @@ class PhoneNumber(BaseModel):
 
 class PaginatedResult(Response):
     total_pages: int = Field(..., description="Total number of pages")
+    total_items: int = Field(..., description="Total number of items")
 
 
 class Filters(BaseModel):
@@ -94,6 +95,10 @@ class Filters(BaseModel):
     match_type: MatchType = Field(
         MatchType.LIKE, description="Match type to apply to the filters"
     )
+    sort_order: SortOrder = Field(
+        SortOrder.ASC, description="Sort order to apply to the filters"
+    )
+    sort_field: str = Field(None, description="Sort field to apply to the filters")
 
 
 class OwjBaseModel(BaseModel):
