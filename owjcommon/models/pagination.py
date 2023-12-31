@@ -54,6 +54,10 @@ async def get_paginated_results_with_filter(
     if user_filters:
         if isinstance(user_filters, BaseModel):
             user_filters = user_filters.dict()
+
+        sort_order = user_filters.pop("sort_order", None)
+        sort_field = user_filters.pop("sort_field", None)
+
         user_conditions = build_conditions(user_filters)
         if user_conditions:
             query = query.filter(
@@ -73,6 +77,7 @@ async def get_paginated_results_with_filter(
         query = query.prefetch_related(*prefetch_related)
 
     if sort_order and sort_field:
+        print(sort_order, sort_field)
         if sort_order == SortOrder.ASC:
             query = query.order_by(sort_field)
         else:

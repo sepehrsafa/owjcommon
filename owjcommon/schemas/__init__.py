@@ -98,7 +98,9 @@ class Filters(BaseModel):
     sort_order: SortOrder = Field(
         SortOrder.ASC, description="Sort order to apply to the filters"
     )
-    sort_field: str = Field(None, description="Sort field to apply to the filters")
+    sort_field: Optional[str] = Field(
+        None, description="Field to sort the results by"
+    )
 
 
 class OwjBaseModel(BaseModel):
