@@ -6,7 +6,13 @@ from uuid import UUID
 
 from pydantic import BaseConfig, BaseModel, Field, ValidationError, validator
 
-from owjcommon.enums import LogicalOperation, MatchType, SortOrder
+from owjcommon.enums import (
+    LogicalOperation,
+    MatchType,
+    SortOrder,
+    UserPermission,
+    UserTypeChoices,
+)
 from owjcommon.exceptions import exception_codes
 from owjcommon.validators import is_valid_phone_number
 
@@ -98,12 +104,22 @@ class Filters(BaseModel):
     sort_order: SortOrder = Field(
         SortOrder.ASC, description="Sort order to apply to the filters"
     )
-    sort_field: Optional[str] = Field(
-        None, description="Field to sort the results by"
-    )
+    sort_field: Optional[str] = Field(None, description="Field to sort the results by")
 
 
 class OwjBaseModel(BaseModel):
     id: int = Field(..., description="Unique identifier")
     created_at: datetime.datetime = Field(..., description="Creation date")
     updated_at: datetime.datetime = Field(..., description="Last update date")
+
+
+class TokenData(BaseModel):
+    id: int
+    sub: str
+    business: Optional[str] = None
+    phone_number: str
+    email: Optional[str] = None
+    exp: int
+    scopes: list[UserPermission]
+    type: UserTypeChoices
+    token_type: str
